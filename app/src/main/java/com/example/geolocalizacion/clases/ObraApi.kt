@@ -1,16 +1,21 @@
 package com.example.geolocalizacion.clases
 
-class ObraAPI(numeroObra:String, idobra:Int, municipio:String, idmunicipio:Int) {
-    var numeroObra:String = "";
-    var idobra:Int = 0;
-    var municipio:String = "";
-    var idmunicipio:Int = 0;
+class ObraAPI(
+    var numeroObra:String,
+    var idobra:Int,
+    var municipio:String,
+    var idmunicipio:Int,
+    var clave:String
+    )
 
-    init {
-        this.numeroObra = numeroObra
-        this.idobra = idobra
-        this.municipio = municipio
-        this.idmunicipio = idmunicipio
-    }
-
-}
+class ObraDatoAPI(
+    val ObraId:Int,
+    val NumeroObra:String,
+    val Descripcion:String,
+    val Fondo:String,
+    val Localidad:String,
+    val Latitud:Double,
+    val Longitud:Double,
+    val Activo:Boolean,
+    val Clave:String
+)

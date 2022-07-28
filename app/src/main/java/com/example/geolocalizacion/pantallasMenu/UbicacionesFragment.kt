@@ -143,13 +143,23 @@ class UbicacionesFragment : Fragment(R.layout.fragment_ubicaciones){
 
         val btnAddUbicacion = view.findViewById<Button>(R.id.botonAddUbicacion)
         btnAddUbicacion.setOnClickListener {
-            DBSqliteHelperLocal(requireContext()).agregarUbicacion(ObraSeleccionada.numeroObra, ObraSeleccionada.idobra, LatitudGlobal.toString(), LongitudGlobal.toString())
-            AlertDialog.Builder(requireContext()).setTitle("Guardado")
-                .setMessage("Se ha guardado la ubicacion correctamente")
-                .setNeutralButton("Continuar"){ dialogInterface,it ->
-                    dialogInterface.cancel()
-                }
-                .show()
+            if(DBSqliteHelperLocal(requireContext()).numeroUbicacionesObra(ObraSeleccionada.numeroObra) == 0){
+                DBSqliteHelperLocal(requireContext()).agregarUbicacion(ObraSeleccionada.numeroObra, ObraSeleccionada.idobra, LatitudGlobal.toString(), LongitudGlobal.toString())
+                AlertDialog.Builder(requireContext()).setTitle("Guardado")
+                    .setMessage("Se ha guardado la ubicacion correctamente")
+                    .setNeutralButton("Continuar"){ dialogInterface,it ->
+                        dialogInterface.cancel()
+                    }
+                    .show()
+            }else{
+                AlertDialog.Builder(requireContext()).setTitle("Error")
+                    .setMessage("Ya existe una ubicación guardada de esta obra")
+                    .setNeutralButton("Continuar"){ dialogInterface,it ->
+                        dialogInterface.cancel()
+                    }
+                    .show()
+            }
+
         }
     }
 

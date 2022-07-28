@@ -117,12 +117,16 @@
                 android:id="@+id/btnFotoTomar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10sp"
+                android:layout_marginRight="10sp"
                 android:text="tomar Foto" />
 
             <Button
                 android:id="@+id/btnGuardaFotoDB"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10sp"
+                android:layout_marginRight="10sp"
                 android:backgroundTint="@color/BotonSubmit"
                 android:text="Guardar" />
 

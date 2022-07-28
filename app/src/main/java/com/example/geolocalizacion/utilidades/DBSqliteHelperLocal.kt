@@ -10,11 +10,11 @@ import com.example.geolocalizacion.clases.FotoObj
 import com.example.geolocalizacion.clases.ObraAPI
 import com.example.geolocalizacion.clases.UbicacionesObj
 
-class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db", null, 1){
+class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db", null, 4){
     override fun onCreate(db: SQLiteDatabase?) {
-        val ordenCreacion = "CREATE TABLE IF NOT EXISTS  obras (_id INTEGER PRIMARY KEY AUTOINCREMENT, numero TEXT, idObra TEXT, idMunicipio TEXT, municipio TEXT)"
+        val ordenCreacion = "CREATE TABLE IF NOT EXISTS  obras (_id INTEGER PRIMARY KEY AUTOINCREMENT, numero TEXT, idObra TEXT, idMunicipio TEXT, municipio TEXT, clave TEXT)"
         db!!.execSQL(ordenCreacion)
-        val creacionTablaFotos = "CREATE TABLE IF NOT EXISTS Fotos (_id INTEGER PRIMARY KEY AUTOINCREMENT, numeroObra TEXT, idObra TEXT,idMunicipio TEXT, municipio TEXT, objJson TEXT, fotoBase64 TEXT)"
+        val creacionTablaFotos = "CREATE TABLE IF NOT EXISTS Fotos (_id INTEGER PRIMARY KEY AUTOINCREMENT, numeroObra TEXT, idObra TEXT,idMunicipio TEXT, municipio TEXT, objJson TEXT, fotoBase64 TEXT, latitud TEXT, longitud TEXT)"
         db!!.execSQL(creacionTablaFotos)
         val tablaUbicaciones = "CREATE TABLE IF NOT EXISTS Ubicaciones(_id INTEGER PRIMARY KEY AUTOINCREMENT, numero TEXT, idObra TEXT, latitud TEXT, longitud TEXT)"
         db!!.execSQL(tablaUbicaciones)
@@ -31,12 +31,13 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
         onCreate(db)
     }
 
-    fun agregarObra(numero:String, idObra:Int, idMunicipio:Int, municipio:String){
+    fun agregarObra(numero:String, idObra:Int, idMunicipio:Int, municipio:String, clave:String){
         val datos = ContentValues()
         datos.put("numero",numero)
         datos.put("idObra",idObra.toString())
         datos.put("idMunicipio",idMunicipio.toString())
         datos.put("municipio",municipio)
+        datos.put("clave", clave)
 
         val db = this.writableDatabase
         db.insert("obras",null,datos)
@@ -69,11 +70,12 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
         val sqlStr =  dbConsulta.rawQuery("SELECT * FROM obras",null)
         if(sqlStr.moveToFirst()){
             do {
-                val numeroObra = sqlStr.getInt(1).toString()
+                val numeroObra = sqlStr.getString(1)
                 val idObra = sqlStr.getInt(2).toInt()
                 val idMunicipio = sqlStr.getInt(3).toInt()
-                val municipio = sqlStr.getInt(4).toString()
-                var obraObj = ObraAPI(numeroObra,idObra,municipio,idMunicipio)
+                val municipio = sqlStr.getString(4)
+                val clave = sqlStr.getString(5)
+                var obraObj = ObraAPI(numeroObra,idObra,municipio,idMunicipio,clave)
                 listaObras.add(obraObj)
             }while (sqlStr.moveToNext())
         }
@@ -81,7 +83,7 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
         return listaObras
     }
 
-    fun agregarFoto(numero:String, idObra:Int, idMunicipio:Int, municipio:String, objJson:String, fotoBase64: String){
+    fun agregarFoto(numero:String, idObra:Int, idMunicipio:Int, municipio:String, objJson:String, fotoBase64: String, latitud:Double, longitud:Double){
         val datos = ContentValues()
         datos.put("numeroObra",numero)
         datos.put("idObra",idObra.toString())
@@ -89,7 +91,8 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
         datos.put("municipio",municipio)
         datos.put("objJson",objJson)
         datos.put("fotoBase64",fotoBase64)
-
+        datos.put("latitud",latitud)
+        datos.put("longitud",longitud)
         val db = this.writableDatabase
         db.insert("Fotos",null,datos)
         db.close()
@@ -101,15 +104,17 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
         val sqlStr =  dbConsulta.rawQuery("SELECT * FROM Fotos",null)
         if(sqlStr.moveToFirst()){
             do {
-                val id = sqlStr.getInt(0).toInt()
-                val numeroObra = sqlStr.getInt(1).toString()
-                val idObra = sqlStr.getInt(2).toInt()
-                val idMunicipio = sqlStr.getInt(3).toInt()
-                val municipio = sqlStr.getInt(4).toString()
-                val objJson = sqlStr.getInt(5).toString()
+                val id = sqlStr.getInt(0)
+                val numeroObra = sqlStr.getString(1)
+                val idObra = sqlStr.getInt(2)
+                val idMunicipio = sqlStr.getInt(3)
+                val municipio = sqlStr.getString(4)
+                val objJson = sqlStr.getString(5)
                 val foto64 = sqlStr.getString(6)
+                val longitud = sqlStr.getString(7)
+                val latitud = sqlStr.getString(8)
                 //Log.e("Foto64",foto64.toString())
-                var fotoObj = FotoObj(id,numeroObra,idObra,"19.00000000000","-94.00000000000",objJson,foto64.toString())
+                var fotoObj = FotoObj(id,numeroObra,idObra,latitud,longitud,objJson,foto64.toString())
                 arrayFoto.add(fotoObj)
             }while (sqlStr.moveToNext())
         }
@@ -143,7 +148,7 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
         if(sqlStr.moveToFirst()){
             do {
                 val id = sqlStr.getInt(0).toInt()
-                val numeroObra = sqlStr.getInt(1).toString()
+                val numeroObra = sqlStr.getString(1)
                 val idObra = sqlStr.getInt(2).toInt()
                 val latitud = sqlStr.getString(3)
                 val longitud = sqlStr.getString(4)
@@ -161,5 +166,18 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
         Log.e("SQL_DELETE", ordenBorrado)
         db!!.execSQL(ordenBorrado)
         db.close()
+    }
+
+    fun numeroUbicacionesObra(numeroObra:String):Int{
+        var NumeroUbicaciones:Int = 0
+        val dbConsulta = this.readableDatabase
+        val sqlStr =  dbConsulta.rawQuery("SELECT COUNT(_id) numeroObra FROM Ubicaciones where numero = '"+numeroObra+"'",null)
+        if(sqlStr.moveToFirst()){
+            do {
+                NumeroUbicaciones = sqlStr.getInt(0)
+            }while (sqlStr.moveToNext())
+        }
+        dbConsulta.close()
+        return NumeroUbicaciones
     }
 }

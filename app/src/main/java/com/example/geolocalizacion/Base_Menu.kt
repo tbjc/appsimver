@@ -19,10 +19,9 @@ class Base_Menu : AppCompatActivity() {
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var tokenStr:String
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         tokenStr = intent.getStringExtra("token").toString()
         setContentView(R.layout.activity_base_menu)
         supportActionBar!!.title = "Carga de Fotografías"

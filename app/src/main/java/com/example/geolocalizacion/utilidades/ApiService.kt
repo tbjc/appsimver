@@ -2,17 +2,14 @@ package com.example.geolocalizacion.utilidades
 
 import com.example.geolocalizacion.clases.*
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface ApiService {
-    @POST("login")
+    @POST("api/LoginTokenAPI/login")
     fun getAllPost(@Body request:RequestLogin): Call<ResponseLogin>
 
-    @GET("getObras")
-    fun getAllObras():Call<List<ObraAPI>>
+    @GET("api/ConsultaObra/obtieneObras")
+    fun getAllObras(@Query("nombreUsuario") usuario:String, @Header("Authorization") tokenAuth:String):Call<List<ObraDatoAPI>>
 
     @POST("cargarObras")
     fun subirObras(@Body listaObras:ArrayList<FotoObj>, @Header("Authorization") tokenAuth:String): Call<ResponseSubirFotos>

@@ -12,7 +12,7 @@
     <ImageView
         android:id="@+id/FotoObraRow"
         android:layout_width="150dp"
-        android:layout_height="125dp"
+        android:layout_height="135dp"
         android:layout_margin="5dp"
         tools:srcCompat="@tools:sample/avatars" />
 
@@ -26,35 +26,54 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="8dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="2sp"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="0dp"
             android:text="Número de Obra:"
-            android:textSize="16sp" />
+            android:textStyle="bold"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/TxtNumObraRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginBottom="7dp"
             android:text="TextView" />
+
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7sp"
+            android:text="Latitud"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtLatItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="7sp"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="5dp" />
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7sp"
+            android:text="Longitud:"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/txtLongItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="7sp"
             android:layout_marginRight="5dp"
-            android:layout_marginBottom="5dp"
-            android:text="TextView" />
+            android:layout_marginBottom="5dp" />
 
     </LinearLayout>
 </LinearLayout>

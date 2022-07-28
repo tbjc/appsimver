@@ -11,6 +11,7 @@ import android.widget.Toast
 import android.widget.Toolbar
 import androidx.core.view.isVisible
 import com.example.geolocalizacion.clases.ObraAPI
+import com.example.geolocalizacion.clases.ObraDatoAPI
 import com.example.geolocalizacion.clases.RequestLogin
 import com.example.geolocalizacion.utilidades.ApiService
 import com.example.geolocalizacion.utilidades.DBSqliteHelperLocal
@@ -27,6 +28,8 @@ class PantallaCarga : AppCompatActivity() {
     private lateinit var btnDato:Button
     private lateinit var btnContinuar:Button
     private lateinit var tokenStr:String
+    private lateinit var nombreUsuario:String
+    private var municipioId:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +37,8 @@ class PantallaCarga : AppCompatActivity() {
         setContentView(R.layout.activity_pantalla_carga)
         supportActionBar!!.title = "Carga de Obras"
         tokenStr = intent.getStringExtra("token").toString()
+        nombreUsuario = intent.getStringExtra("usuario").toString()
+        municipioId = intent.getIntExtra("idMunicipio",0)
         btnDato = findViewById<Button>(R.id.btnTemp)
         btnContinuar = findViewById<Button>(R.id.btnContinuar)
         btnDato.isVisible = false
@@ -65,7 +70,9 @@ class PantallaCarga : AppCompatActivity() {
         btnContinuar.setOnClickListener {
             val pasePantalla = Intent(this,Base_Menu::class.java)
             pasePantalla.putExtra("hayConexion","S")
+            pasePantalla.putExtra("usuario",nombreUsuario)
             pasePantalla.putExtra("token",tokenStr)
+
             startActivity(pasePantalla)
         }
     }
@@ -73,19 +80,18 @@ class PantallaCarga : AppCompatActivity() {
     fun cargarObrasLocalDB (textDato:TextView){
         textDato.setText("Descargando Obras de tu municipio...")
         val service = Network.FuncionApi()
-        service.getAllObras().enqueue(object: Callback<List<ObraAPI>>{
-            override fun onResponse(call: Call<List<ObraAPI>>, response: Response<List<ObraAPI>>) {
-                var postStr:List<ObraAPI> = response?.body()!!
+        service.getAllObras(nombreUsuario,tokenStr).enqueue(object: Callback<List<ObraDatoAPI>>{
+            override fun onResponse(call: Call<List<ObraDatoAPI>>, response: Response<List<ObraDatoAPI>>) {
+                var postStr:List<ObraDatoAPI> = response?.body()!!
                 postStr.forEach{
-                    dbConn.agregarObra(it.numeroObra, it.idobra, it.idmunicipio, it.municipio)
+                    dbConn.agregarObra(it.NumeroObra, it.ObraId, municipioId, it.Localidad, it.Clave)
                     Log.e("Obras API Consulta",it.toString())
                 }
                 textDato.setText("Se descargaron ${postStr.size} obras a la aplicación, puede continuar")
                 btnDato.isVisible = true
                 btnContinuar.isVisible = true
             }
-            override fun onFailure(call: Call<List<ObraAPI>>, t: Throwable) {
-                TODO("Not yet implemented")
+            override fun onFailure(call: Call<List<ObraDatoAPI>>, t: Throwable) {
                 btnDato.isVisible = true
             }
         })

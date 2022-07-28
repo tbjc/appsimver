@@ -27,9 +27,12 @@ import androidx.fragment.app.Fragment
 import com.example.geolocalizacion.BuildConfig
 import com.example.geolocalizacion.MainActivity
 import com.example.geolocalizacion.R
+import com.example.geolocalizacion.clases.ObjPolygono
 import com.example.geolocalizacion.clases.ObraAPI
 import com.example.geolocalizacion.utilidades.DBSqliteHelperLocal
+import com.example.geolocalizacion.utilidades.Network
 import com.google.android.gms.location.*
+import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.io.File
 
@@ -185,41 +188,60 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
 
         //Evento de boton para tomar fotos
         btnFoto.setOnClickListener {
-            /*CargaUbicacion()
-            var puntosX:ArrayList<Double> = ArrayList()
-            puntosX.add(-96.883657)
-            puntosX.add(-96.879098)
-            puntosX.add(-96.860773)
-            puntosX.add(-96.867124)
-
-            var puntosY:ArrayList<Double> = ArrayList()
-            puntosY.add(19.661089)
-            puntosY.add(19.646116)
-            puntosY.add(19.653876)
-            puntosY.add(19.669192)
-            if (puntoEnPoligono(4,puntosX, puntosY, -96.871497,19.657160)){
-                Toast.makeText(requireContext(),"está Dentro",Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(requireContext(),"No está Dentro",Toast.LENGTH_SHORT).show()
-            }*/
-            txtMensajeFoto.isVisible = true
-            txtMensajeFoto.text = "Comprobando Ubicación"
-
-            val intentCamara = Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
-                it.resolveActivity(requireActivity().packageManager).also { component ->
-                    val photoFile: File = createPhotoFile()
-                    fileExt = photoFile
-                    val photoUri: Uri = FileProvider.getUriForFile(requireContext(),BuildConfig.APPLICATION_ID+".fileprovider",photoFile)
-                    it.putExtra(MediaStore.EXTRA_OUTPUT,photoUri)
+            var localizacionDato:Boolean = false
+            val nombreArchivo:String = ObraSeleccionada.clave+".json"
+            val txtJson:String = Network.getStringJson(requireContext(), nombreArchivo)
+            val objPolCoordenadas = Gson().fromJson(txtJson, ObjPolygono::class.java)
+            objPolCoordenadas.geometry.coordinates.forEach {
+                var arrayEjeX:ArrayList<Double> = ArrayList<Double>()
+                var arrayEjeY:ArrayList<Double> = ArrayList<Double>()
+                it.forEach { it2->
+                    arrayEjeX.add(it2[0])
+                    arrayEjeY.add(it2[1])
+                }
+                if(Network.puntoEnPoligono(arrayEjeX.size, arrayEjeX, arrayEjeY, LongitudGlobal, LatitudGlobal)){
+                    localizacionDato = true
                 }
             }
-            //intentCamara.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(File("/sdcard/tmp")))
-            ///intentCamara.putExtra("android.intent.extras.CAMERA_FACING", 1);
-            startForResult.launch(intentCamara)
+
+            if (localizacionDato){
+                txtMensajeFoto.isVisible = true
+                txtMensajeFoto.text = "Comprobando Ubicación"
+
+                val intentCamara = Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
+                    it.resolveActivity(requireActivity().packageManager).also { component ->
+                        val photoFile: File = createPhotoFile()
+                        fileExt = photoFile
+                        val photoUri: Uri = FileProvider.getUriForFile(requireContext(),BuildConfig.APPLICATION_ID+".fileprovider",photoFile)
+                        it.putExtra(MediaStore.EXTRA_OUTPUT,photoUri)
+                    }
+                }
+                //intentCamara.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(File("/sdcard/tmp")))
+                ///intentCamara.putExtra("android.intent.extras.CAMERA_FACING", 1);
+                startForResult.launch(intentCamara)
+            }else{
+                AlertDialog.Builder(requireContext()).setTitle("Error")
+                    .setMessage("Usted no se encuentra dentro del municipio: '"+ObraSeleccionada.municipio+"'")
+                    .setNeutralButton("Continuar"){ dialogInterface,it ->
+                        dialogInterface.cancel()
+                    }
+                    .show()
+            }
+
+
         }
 
         btnGuardarFoto.setOnClickListener {
-            DBSqliteHelperLocal(cont).agregarFoto(ObraSeleccionada.numeroObra.toString(),ObraSeleccionada.idobra,ObraSeleccionada.idmunicipio,ObraSeleccionada.municipio.toString(),"",fotoBase64)
+            DBSqliteHelperLocal(cont).agregarFoto(
+                ObraSeleccionada.numeroObra,
+                ObraSeleccionada.idobra,
+                ObraSeleccionada.idmunicipio,
+                ObraSeleccionada.municipio,
+                "",
+                fotoBase64,
+                LatitudGlobal,
+                LongitudGlobal
+            )
             ObraSeleccionada.numeroObra
             this.tomoFoto = false
             this.btnGuardarFoto.isVisible = false
@@ -233,7 +255,6 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
                 }
                 .show()
         }
-
     }
 
     private fun createPhotoFile(): File {

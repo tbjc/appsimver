@@ -1,10 +1,10 @@
 package com.example.geolocalizacion.clases
 
 class RequestLogin (usuario:String, pass:String){
-    var usuario:String = ""
-    var password:String = ""
+    var Usuario:String = ""
+    var Contrasena:String = ""
     init {
-        this.usuario = usuario;
-        this.password = pass
+        this.Usuario = usuario;
+        this.Contrasena = pass
     }
 }

@@ -41,8 +41,8 @@ class MainActivity : AppCompatActivity() {
             if (textUsuarioEdit.text.isNotBlank()){
                 if(textPassEdit.text.isNotBlank()){
 
-                    var urlServer:String = "http://192.168.0.14/proyectoApi/public/";
-                    solicitudLogin(urlServer,usuario,password);
+                    //var urlServer:String = "http://192.168.0.14/proyectoApi/public/";
+                    solicitudLogin(usuario,password);
                 }else{
                     Toast.makeText(this,"Falta la contraseña",Toast.LENGTH_SHORT).show()
                 }
@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun solicitudLogin(url:String, usuario:String, pass:String){
+    private fun solicitudLogin(usuario:String, pass:String){
         val requestLogin = RequestLogin(usuario.trim(), pass.trim())
 
         val service = Network.FuncionApi()
@@ -70,14 +70,17 @@ class MainActivity : AppCompatActivity() {
                 textoMensaje.text = ""
                 if(response.isSuccessful){
                     post = response.body()
-                    if(post?.pasa == true){
+                    if(post?.valido == true){
                         val intent = Intent(cont, PantallaCarga::class.java)
                         intent.putExtra("token",post?.token)
+                        intent.putExtra("usuario",usuario.trim())
+                        intent.putExtra("idMunicipio",post?.municipioId)
                         startActivity(intent)
                     }else{
                         dialogB.setTitle("Error")
-                            .setMessage(post?.msj)
+                            .setMessage(post?.mensaje)
                             .setNeutralButton("Continuar"){ dialogInterface,it ->
+                                it.toString()
                                 dialogInterface.cancel()
                             }
                             .show()
@@ -89,9 +92,12 @@ class MainActivity : AppCompatActivity() {
             override fun onFailure(call: Call<ResponseLogin>, t: Throwable) {
                 Log.i("peticion Fin","se finalizó peticion")
                 textoMensaje.text = ""
+                Log.i("peticion Fin",t.toString())
+
                 dialogB.setTitle("Error")
                     .setMessage("No se ha podico comunicar con el servidor, intente mas tarde o comuníquese con el ORFIS")
                     .setNeutralButton("Continuar"){ dialogInterface,it ->
+                        it.toString()
                         dialogInterface.cancel()
                     }
                     .show()
