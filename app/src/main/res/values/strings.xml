@@ -1,0 +1,25 @@
+<resources>
+    <string name="UrlServidor">http://192.168.0.14/proyectoApi/public/</string>
+    <string name="app_name">Actualización Datos Obras - SIMVER</string>
+    <string name="UsuarioLogin">Usuario</string>
+    <string name="PassLogin">Contraseña</string>
+    <string name="open_drawer">abrir</string>
+    <string name="close_drawer">cerrar</string>
+    <string name="SelObra">Selecciona una obra</string>
+
+    <!-- Cadenas para labels de fotos y cargar ubicaciones -->
+    <string name="tituloCoordenada">Coordenadas Actuales</string>
+    <string name="latitudLabel">Latitud Actual</string>
+    <string name="longitudLabel">Longitud Actual</string>
+
+    <!-- opciones del menú principal dentro de la aplicación -->
+    <string name="opcion1">Tomar Fotografía</string>
+    <string name="opcion2">Subir Fotografías</string>
+    <string name="opcion3">Guardar Ubicación</string>
+    <string name="opcion4">Subir Ubicaciones</string>
+    <string name="opcion5">Salir</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+</resources>

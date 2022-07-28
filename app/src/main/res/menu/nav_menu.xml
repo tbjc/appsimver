@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/nav_1"
+        android:title="@string/opcion1"
+        android:icon="@android:drawable/ic_menu_camera"/>
+    <item android:id="@+id/nav_2"
+        android:title="@string/opcion2"
+        android:icon="@android:drawable/ic_menu_upload"/>
+    <item android:id="@+id/nav_3"
+        android:title="@string/opcion3"
+        android:icon="@android:drawable/ic_menu_mylocation"/>
+    <item android:id="@+id/nav_4"
+        android:title="@string/opcion4"
+        android:icon="@android:drawable/ic_menu_mylocation"/>
+    <item android:id="@+id/nav_salir"
+        android:title="@string/opcion5"
+        android:icon="@drawable/ic_baseline_login_24"/>
+</menu>

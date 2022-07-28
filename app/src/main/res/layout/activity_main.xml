@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/BtnEntrar"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/rect833"
+        android:contentDescription="@string/app_name">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30sp"
+            android:layout_marginTop="100sp"
+            android:layout_marginRight="30sp"
+            android:layout_marginBottom="30sp"
+            android:background="#C8F3F3E1"
+            android:backgroundTint="#ECECE1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15sp"
+                android:layout_marginTop="15sp"
+                android:layout_marginRight="15sp"
+                android:layout_marginBottom="5sp"
+                android:text="@string/UsuarioLogin" />
+
+            <EditText
+                android:id="@+id/EditUsuarioLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15sp"
+                android:layout_marginRight="15sp"
+                android:layout_marginBottom="15sp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:minHeight="48dp" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15sp"
+                android:layout_marginRight="15sp"
+                android:layout_marginBottom="5sp"
+                android:text="@string/PassLogin" />
+
+            <EditText
+                android:id="@+id/EditPassLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15sp"
+                android:layout_marginRight="15sp"
+                android:layout_marginBottom="10sp"
+                android:ems="10"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:id="@+id/MensajePeticion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5sp"
+                android:textAlignment="center"
+                android:textColor="@color/errorColor" />
+
+            <Button
+                android:id="@+id/btnEntrar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+
+                android:layout_marginRight="15dp"
+                android:backgroundTint="@color/BotonSubmit"
+                android:text="Entrar" />
+
+            <Button
+                android:id="@+id/btnSinDatos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="60sp"
+                android:layout_marginTop="20sp"
+                android:layout_marginRight="60sp"
+                android:layout_marginBottom="15sp"
+                android:backgroundTint="@color/design_default_color_error"
+                android:text="Modo Sin Datos"
+                android:textSize="11sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

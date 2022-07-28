@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".pantallasMenu.FotoFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8sp"
+                android:text="Selecciona una obra"
+                android:textSize="18sp" />
+
+            <Spinner
+                android:id="@+id/spinnerObrasUbicacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8sp"
+                android:layout_marginRight="8sp"
+                android:layout_marginBottom="8sp"
+                android:background="@drawable/spinner"
+                tools:listitem="@android:layout/simple_spinner_dropdown_item" />
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8sp"
+                android:layout_marginRight="8sp"
+                android:layout_marginBottom="8sp"
+                android:text="@string/tituloCoordenada"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8sp"
+                android:layout_marginRight="8sp"
+                android:layout_marginBottom="8sp"
+                android:layout_weight="1"
+                android:text="@string/latitudLabel"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtLatitud2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8sp"
+                android:layout_marginRight="8sp"
+                android:layout_marginBottom="8sp"
+                android:layout_weight="1"
+                android:text="0.0"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8sp"
+                android:layout_marginRight="8sp"
+                android:layout_marginBottom="8sp"
+                android:layout_weight="1"
+                android:text="@string/longitudLabel"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/txtLongitud2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8sp"
+                android:layout_marginRight="8sp"
+                android:layout_marginBottom="8sp"
+                android:layout_weight="1"
+                android:text="0.0"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/botonAddUbicacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8sp"
+                android:text="Guardar" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
