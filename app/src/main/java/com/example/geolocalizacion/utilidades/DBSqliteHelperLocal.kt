@@ -10,13 +10,32 @@ import com.example.geolocalizacion.clases.FotoObj
 import com.example.geolocalizacion.clases.ObraAPI
 import com.example.geolocalizacion.clases.UbicacionesObj
 
-class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db", null, 4){
+class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db", null, 1){
     override fun onCreate(db: SQLiteDatabase?) {
-        val ordenCreacion = "CREATE TABLE IF NOT EXISTS  obras (_id INTEGER PRIMARY KEY AUTOINCREMENT, numero TEXT, idObra TEXT, idMunicipio TEXT, municipio TEXT, clave TEXT)"
+        val ordenCreacion = "CREATE TABLE IF NOT EXISTS  obras (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "numero TEXT, " +
+                "idObra TEXT, " +
+                "idMunicipio TEXT, " +
+                "municipio TEXT, " +
+                "clave TEXT)"
         db!!.execSQL(ordenCreacion)
-        val creacionTablaFotos = "CREATE TABLE IF NOT EXISTS Fotos (_id INTEGER PRIMARY KEY AUTOINCREMENT, numeroObra TEXT, idObra TEXT,idMunicipio TEXT, municipio TEXT, objJson TEXT, fotoBase64 TEXT, latitud TEXT, longitud TEXT)"
+        val creacionTablaFotos = "CREATE TABLE IF NOT EXISTS Fotos (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "numeroObra TEXT, " +
+                "idObra TEXT, " +
+                "idMunicipio TEXT, " +
+                "municipio TEXT, " +
+                "objJson TEXT, " +
+                "fotoBase64 TEXT, " +
+                "latitud TEXT, " +
+                "longitud TEXT, " +
+                "descripcion TEXT, " +
+                "mesFoto TEXT)"
         db!!.execSQL(creacionTablaFotos)
-        val tablaUbicaciones = "CREATE TABLE IF NOT EXISTS Ubicaciones(_id INTEGER PRIMARY KEY AUTOINCREMENT, numero TEXT, idObra TEXT, latitud TEXT, longitud TEXT)"
+        val tablaUbicaciones = "CREATE TABLE IF NOT EXISTS Ubicaciones(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "numero TEXT, " +
+                "idObra TEXT, " +
+                "latitud TEXT, " +
+                "longitud TEXT)"
         db!!.execSQL(tablaUbicaciones)
        // val tablaUbicaciones = "CREATE TABLE IF NOT EXISTS ubicaciones"
     }
@@ -83,7 +102,7 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
         return listaObras
     }
 
-    fun agregarFoto(numero:String, idObra:Int, idMunicipio:Int, municipio:String, objJson:String, fotoBase64: String, latitud:Double, longitud:Double){
+    fun agregarFoto(numero:String, idObra:Int, idMunicipio:Int, municipio:String, objJson:String, fotoBase64: String, latitud:Double, longitud:Double, descripcion:String, mesDato:Int){
         val datos = ContentValues()
         datos.put("numeroObra",numero)
         datos.put("idObra",idObra.toString())
@@ -93,6 +112,8 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
         datos.put("fotoBase64",fotoBase64)
         datos.put("latitud",latitud)
         datos.put("longitud",longitud)
+        datos.put("descripcion",descripcion)
+        datos.put("mesFoto",mesDato)
         val db = this.writableDatabase
         db.insert("Fotos",null,datos)
         db.close()
@@ -113,8 +134,10 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
                 val foto64 = sqlStr.getString(6)
                 val longitud = sqlStr.getString(7)
                 val latitud = sqlStr.getString(8)
+                val descripcion = sqlStr.getString(9)
+                val mes = sqlStr.getInt(10)
                 //Log.e("Foto64",foto64.toString())
-                var fotoObj = FotoObj(id,numeroObra,idObra,latitud,longitud,objJson,foto64.toString())
+                var fotoObj = FotoObj(id,numeroObra,idObra,latitud,longitud,objJson,foto64.toString(),mes)
                 arrayFoto.add(fotoObj)
             }while (sqlStr.moveToNext())
         }

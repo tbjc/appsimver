@@ -1,9 +1,6 @@
 package com.example.geolocalizacion.utilidades
 
-
-
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,21 +9,16 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geolocalizacion.R
 import com.example.geolocalizacion.clases.FotoObj
-import java.util.*
+import com.example.geolocalizacion.clases.fotoPostRequest
 import kotlin.collections.ArrayList
 
-
-
-
 class FotoAdapter(val fotoObra:ArrayList<FotoObj>):RecyclerView.Adapter<FotoAdapter.FotoHolder>(){
-
     private var objSeleccionados:ArrayList<FotoObj> = fotoObra
     private var objSeleccionadosBooleano:ArrayList<Boolean> = ArrayList<Boolean>()
+    private var listaVistas:ArrayList<View> = ArrayList()
 
     init {
         objSeleccionados.forEach {
@@ -35,8 +27,8 @@ class FotoAdapter(val fotoObra:ArrayList<FotoObj>):RecyclerView.Adapter<FotoAdap
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FotoHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        return FotoHolder(layoutInflater.inflate(R.layout.item_foto,parent,false))
+        val layoutInflater = LayoutInflater.from(parent.context).inflate(R.layout.item_foto,parent,false)
+        return FotoHolder(layoutInflater)
     }
 
     override fun onBindViewHolder(holder: FotoHolder, position: Int) {
@@ -45,11 +37,15 @@ class FotoAdapter(val fotoObra:ArrayList<FotoObj>):RecyclerView.Adapter<FotoAdap
         holder.itemView.setOnClickListener {
             if(objSeleccionadosBooleano.get(position)){
                 objSeleccionadosBooleano.set(position,false)
-                it.setBackgroundColor(Color.parseColor("#e1e1e1"))
             }else{
                 objSeleccionadosBooleano.set(position,true)
-                it.setBackgroundColor(Color.parseColor("#A8CFAB"))
             }
+            notifyDataSetChanged()
+        }
+        if(objSeleccionadosBooleano.get(position)){
+            holder.cardView.setBackgroundResource(R.drawable.style_item_selected)
+        }else{
+            holder.cardView.setBackgroundResource(R.drawable.style_item_foto)
         }
     }
 
@@ -67,17 +63,43 @@ class FotoAdapter(val fotoObra:ArrayList<FotoObj>):RecyclerView.Adapter<FotoAdap
         return returnObras
     }
 
+    fun obrasRequestDatos(){
+        var returnObras: ArrayList<FotoObj> = ArrayList<FotoObj>()
+        objSeleccionadosBooleano.forEachIndexed { index, estaSeleccionado->
+            if (estaSeleccionado){
+                returnObras.add(objSeleccionados.get(index))
+            }
+        }
+        var objDatos:ArrayList<fotoPostRequest> = ArrayList<fotoPostRequest>()
+        objDatos.forEach {
+
+            val objFoto:fotoPostRequest = fotoPostRequest(
+                it.ObraId,
+                it.NumeroObra,
+                it.DescripcionFoto,
+                it.Mes,
+                it.Latitud,
+                it.Longitud,
+                1,
+                "{\"filename\":\"token_base64\",\"json_metadata\":\"{}\"}"
+            )
+
+        }
+    }
+
     class FotoHolder(val view: View):RecyclerView.ViewHolder(view){
         var seleccionado:Boolean = false
+        val cardView:LinearLayout = view.findViewById(R.id.LayoutFoto)
         fun render(fotoobj:FotoObj){
-            var numObra: TextView = view.findViewById<TextView>(R.id.TxtNumObraRow)
+            val numObra: TextView = view.findViewById(R.id.TxtNumObraRow)
             numObra.text = fotoobj.numeroObra
             view.findViewById<TextView>(R.id.txtLatItem).text = fotoobj.latitud
             view.findViewById<TextView>(R.id.txtLongItem).text = fotoobj.longitud
+            val meses:ArrayList<String> = arrayListOf("Enero", "Febrero","Marzo","Abril","Mayo", "Junio","Julio", "Agosto","Septiembre","Octubre","Noviembre","Diciembre")
+            view.findViewById<TextView>(R.id.txtMes).text = "Mes : " + meses.get(fotoobj.mes - 1)
             var imageBytes = Base64.decode(fotoobj.foto64, Base64.DEFAULT)
             val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
             view.findViewById<ImageView>(R.id.FotoObraRow).setImageBitmap(decodedImage)
         }
     }
-
 }

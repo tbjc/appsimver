@@ -104,7 +104,27 @@
                     android:layout_weight="1"
                     android:text="0.0"
                     android:textSize="16dp" />
+
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/labelFotoDescripcion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7sp"
+                android:layout_marginTop="8sp"
+                android:layout_marginRight="7sp"
+                android:text="Descripción" />
+
+            <EditText
+                android:id="@+id/txtDescripcionFoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="7sp"
+                android:layout_weight="1"
+                android:ems="10"
+                android:gravity="start|top"
+                android:inputType="textMultiLine" />
 
             <TextView
                 android:id="@+id/txtMensaje"

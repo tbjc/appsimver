@@ -35,6 +35,8 @@ import com.google.android.gms.location.*
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.time.LocalDate
+import kotlin.collections.ArrayList
 
 
 class FotoFragment() : Fragment(R.layout.fragment_foto){
@@ -49,6 +51,8 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
     private lateinit var  txtLatitud: TextView
     private lateinit var  txtLongitud: TextView
     private lateinit var txtMensajeFoto:TextView
+    private lateinit var labelDescripcion:TextView
+    private lateinit var descripcionFoto:EditText
     private lateinit var btnGuardarFoto:Button
     // Cargando Los permisos que van a ser para poder obtener la ubicación
     private val permisoFineLocation = android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -108,7 +112,7 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
                 for(ubicacion in locationResult?.locations!!){
-                    Log.e("paso","Cargó datos ubicacion")
+                    //Log.e("paso","Cargó datos ubicacion")
                     LatitudGlobal = ubicacion.latitude
                     LongitudGlobal = ubicacion.longitude
                     txtLatitud.text = ubicacion.latitude.toString()
@@ -149,8 +153,12 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
         this.txtLongitud = view.findViewById(R.id.txtLongitud)
         this.btnGuardarFoto = view.findViewById<Button>(R.id.btnGuardaFotoDB)
         this.txtMensajeFoto = view.findViewById(R.id.txtMensaje)
+        this.labelDescripcion = view.findViewById(R.id.labelFotoDescripcion)
+        this.descripcionFoto = view.findViewById(R.id.txtDescripcionFoto)
         this.txtMensajeFoto.isVisible = false
         btnGuardarFoto.isVisible = false
+        labelDescripcion.isVisible = false
+        descripcionFoto.isVisible = false
         // Se Cargan las obras al SPINNER
         ListaObrasObj = DBSqliteHelperLocal(cont).getAllObras()
         ListaObrasObj.forEach {
@@ -231,29 +239,28 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
 
         }
 
+        //evento para guardar fotografias
         btnGuardarFoto.setOnClickListener {
-            DBSqliteHelperLocal(cont).agregarFoto(
-                ObraSeleccionada.numeroObra,
-                ObraSeleccionada.idobra,
-                ObraSeleccionada.idmunicipio,
-                ObraSeleccionada.municipio,
-                "",
-                fotoBase64,
-                LatitudGlobal,
-                LongitudGlobal
-            )
-            ObraSeleccionada.numeroObra
-            this.tomoFoto = false
-            this.btnGuardarFoto.isVisible = false
-            fotoBase64 = ""
-            btnGuardarFoto.isVisible = false;
-            this.imageViewTmp.isVisible = false
-            AlertDialog.Builder(requireContext()).setTitle("Guardado")
-                .setMessage("Se ha guardado la fotografía correctamente")
-                .setNeutralButton("Continuar"){ dialogInterface,it ->
-                    dialogInterface.cancel()
-                }
-                .show()
+            val fechaDia:Int = LocalDate.now().dayOfMonth
+            val fechaMEs:Int = LocalDate.now().monthValue
+            var mesGuardar:Int = 0
+            val nombreMeses:ArrayList<String> = arrayListOf("Diciembre","Enero", "Febrero","Marzo","Abril","Mayo", "Junio","Julio", "Agosto","Septiembre","Octubre","Noviembre","Diciembre")
+            if (fechaDia <= 10){
+                var mesActual:String = nombreMeses.get(fechaMEs)
+                var mesAnterior:String = nombreMeses.get(fechaMEs - 1)
+                AlertDialog.Builder(requireContext()).setTitle("Advertencia")
+                    .setMessage("¿En que mes quiere que sea asignada la fotografía?")
+                    .setNeutralButton(mesAnterior){ dialog, it->
+                        if(fechaMEs == 1) mesGuardar = 12 else mesGuardar = fechaMEs - 1
+                        Log.e("mes Anterior",mesGuardar.toString())
+                        guardarFotoDB(mesGuardar)
+                    }.setPositiveButton(mesActual){ dialog, it->
+                        Log.e("mes Anterior",fechaMEs.toString())
+                        guardarFotoDB(fechaMEs)
+                    }.show()
+            }else{
+                guardarFotoDB(fechaMEs)
+            }
         }
     }
 
@@ -262,7 +269,6 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
         val file = File.createTempFile("IMG_${System.currentTimeMillis()}_",".jpg",dir)
         return file
     }
-
 
     //cuando el evento de fotos se usa y es posible usar la camara
     private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -293,6 +299,8 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
             fileExt.delete()
             this.tomoFoto = true
             this.btnGuardarFoto.isVisible = true
+            this.labelDescripcion.isVisible = true
+            this.descripcionFoto.isVisible = true
         }
     }
 
@@ -301,5 +309,43 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
         super.onStop()
         //detener actualizacion de ubicación
         fusedLocationClient.removeLocationUpdates(callback!!)
+    }
+
+    private fun guardarFotoDB(mesDato:Int){
+        val Descripcion:String = descripcionFoto.text.toString().trim()
+        if(Descripcion.isNotEmpty()){
+            DBSqliteHelperLocal(requireContext()).agregarFoto(
+                ObraSeleccionada.numeroObra,
+                ObraSeleccionada.idobra,
+                ObraSeleccionada.idmunicipio,
+                ObraSeleccionada.municipio,
+                "",
+                fotoBase64,
+                LatitudGlobal,
+                LongitudGlobal,
+                Descripcion,
+                mesDato
+            )
+            ObraSeleccionada.numeroObra
+            this.tomoFoto = false
+            this.btnGuardarFoto.isVisible = false
+            fotoBase64 = ""
+            btnGuardarFoto.isVisible = false
+            this.imageViewTmp.isVisible = false
+            descripcionFoto.setText("")
+            labelDescripcion.isVisible = false
+            descripcionFoto.isVisible = false
+            AlertDialog.Builder(requireContext()).setTitle("Guardado")
+                .setMessage("Se ha guardado la fotografía correctamente")
+                .setNeutralButton("Continuar"){ dialogInterface,it ->
+                    dialogInterface.cancel()
+                }.show()
+        }else{
+            AlertDialog.Builder(requireContext()).setTitle("Error")
+                .setMessage("Debe agregar una descripción")
+                .setNeutralButton("Continuar"){ dialogInterface,it ->
+                    dialogInterface.cancel()
+                }.show()
+        }
     }
 }

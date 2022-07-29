@@ -80,7 +80,7 @@ class PantallaCarga : AppCompatActivity() {
     fun cargarObrasLocalDB (textDato:TextView){
         textDato.setText("Descargando Obras de tu municipio...")
         val service = Network.FuncionApi()
-        service.getAllObras(nombreUsuario,tokenStr).enqueue(object: Callback<List<ObraDatoAPI>>{
+        service.getAllObras(nombreUsuario,"Bearer "+tokenStr).enqueue(object: Callback<List<ObraDatoAPI>>{
             override fun onResponse(call: Call<List<ObraDatoAPI>>, response: Response<List<ObraDatoAPI>>) {
                 var postStr:List<ObraDatoAPI> = response?.body()!!
                 postStr.forEach{
