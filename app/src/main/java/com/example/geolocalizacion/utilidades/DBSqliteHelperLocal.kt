@@ -29,7 +29,8 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
                 "latitud TEXT, " +
                 "longitud TEXT, " +
                 "descripcion TEXT, " +
-                "mesFoto TEXT)"
+                "mesFoto TEXT," +
+                "fechaFoto TEXT)"
         db!!.execSQL(creacionTablaFotos)
         val tablaUbicaciones = "CREATE TABLE IF NOT EXISTS Ubicaciones(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "numero TEXT, " +
@@ -102,7 +103,7 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
         return listaObras
     }
 
-    fun agregarFoto(numero:String, idObra:Int, idMunicipio:Int, municipio:String, objJson:String, fotoBase64: String, latitud:Double, longitud:Double, descripcion:String, mesDato:Int){
+    fun agregarFoto(numero:String, idObra:Int, idMunicipio:Int, municipio:String, objJson:String, fotoBase64: String, latitud:Double, longitud:Double, descripcion:String, mesDato:Int, fecha:String){
         val datos = ContentValues()
         datos.put("numeroObra",numero)
         datos.put("idObra",idObra.toString())
@@ -114,6 +115,7 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
         datos.put("longitud",longitud)
         datos.put("descripcion",descripcion)
         datos.put("mesFoto",mesDato)
+        datos.put("fechaFoto",fecha)
         val db = this.writableDatabase
         db.insert("Fotos",null,datos)
         db.close()
@@ -132,12 +134,13 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
                 val municipio = sqlStr.getString(4)
                 val objJson = sqlStr.getString(5)
                 val foto64 = sqlStr.getString(6)
-                val longitud = sqlStr.getString(7)
-                val latitud = sqlStr.getString(8)
+                val latitud = sqlStr.getString(7)
+                val longitud = sqlStr.getString(8)
                 val descripcion = sqlStr.getString(9)
                 val mes = sqlStr.getInt(10)
+                val fecha = sqlStr.getString(11)
                 //Log.e("Foto64",foto64.toString())
-                var fotoObj = FotoObj(id,numeroObra,idObra,latitud,longitud,objJson,foto64.toString(),mes)
+                var fotoObj = FotoObj(id,numeroObra,idObra,latitud,longitud,objJson,foto64.toString(),mes,descripcion,fecha)
                 arrayFoto.add(fotoObj)
             }while (sqlStr.moveToNext())
         }

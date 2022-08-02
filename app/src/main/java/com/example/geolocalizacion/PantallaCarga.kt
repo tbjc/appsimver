@@ -29,6 +29,7 @@ class PantallaCarga : AppCompatActivity() {
     private lateinit var btnContinuar:Button
     private lateinit var tokenStr:String
     private lateinit var nombreUsuario:String
+    private var idUsuario:String = ""
     private var municipioId:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +39,7 @@ class PantallaCarga : AppCompatActivity() {
         supportActionBar!!.title = "Carga de Obras"
         tokenStr = intent.getStringExtra("token").toString()
         nombreUsuario = intent.getStringExtra("usuario").toString()
+        this.idUsuario = intent.getStringExtra("IdUsuario").toString()
         municipioId = intent.getIntExtra("idMunicipio",0)
         btnDato = findViewById<Button>(R.id.btnTemp)
         btnContinuar = findViewById<Button>(R.id.btnContinuar)
@@ -72,6 +74,7 @@ class PantallaCarga : AppCompatActivity() {
             pasePantalla.putExtra("hayConexion","S")
             pasePantalla.putExtra("usuario",nombreUsuario)
             pasePantalla.putExtra("token",tokenStr)
+            pasePantalla.putExtra("idUsuario",this.idUsuario)
 
             startActivity(pasePantalla)
         }

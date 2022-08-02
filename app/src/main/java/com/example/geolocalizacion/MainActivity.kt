@@ -74,7 +74,9 @@ class MainActivity : AppCompatActivity() {
                         val intent = Intent(cont, PantallaCarga::class.java)
                         intent.putExtra("token",post?.token)
                         intent.putExtra("usuario",usuario.trim())
+                        intent.putExtra("IdUsuario",post?.userId.toString())
                         intent.putExtra("idMunicipio",post?.municipioId)
+                        Log.e("valorId",post?.userId.toString())
                         startActivity(intent)
                     }else{
                         dialogB.setTitle("Error")

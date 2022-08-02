@@ -28,13 +28,18 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class MandarFotosFragment(token:String) : Fragment(R.layout.fragment_mandar_fotos){
+class MandarFotosFragment(token:String, IdUsuario:Int) : Fragment(R.layout.fragment_mandar_fotos){
     lateinit var ListaFotos:ArrayList<FotoObj>
     lateinit var rvFotos: RecyclerView
     lateinit var valAdapter: FotoAdapter
     private lateinit var dialogB:AlertDialog.Builder
     private lateinit var dialogB2:AlertDialog.Builder
     private var tokenStr:String = token
+    private var IdUsuario: Int = 0
+
+    init {
+        this.IdUsuario = IdUsuario
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,7 +49,7 @@ class MandarFotosFragment(token:String) : Fragment(R.layout.fragment_mandar_foto
         dialogB2 = AlertDialog.Builder(requireContext())
         val buttonMandar:Button = view.findViewById(R.id.btnMandarFotos)
         buttonMandar.setOnClickListener {
-            val listaFoto = valAdapter.ObrasSeleccionadasArray()
+            val listaFoto = valAdapter.obrasRequestDatos(IdUsuario)
             if(listaFoto.size > 0){
                 dialogB.setTitle("Confirmar").setMessage("¿Está seguro de enviar estas fotos?")
                     .setNegativeButton("Enviar", DialogInterface.OnClickListener{ dialog, id ->
@@ -56,13 +61,13 @@ class MandarFotosFragment(token:String) : Fragment(R.layout.fragment_mandar_foto
                             override fun onResponse(call: Call<ResponseSubirFotos>,response: Response<ResponseSubirFotos>) {
                                 val res = response.body()!!
                                 LoadingScreen.hideLoading()
-                                if(res.pasa){
+                                if(res.valido){
                                     IniciarRecycler(view)
-                                    MostrarMensajeSencillo("Fotos subidas",res.msj)
+                                    MostrarMensajeSencillo("Fotos subidas",res.mensaje)
                                 }else{
-                                    MostrarMensajeSencillo("Error",res.msj)
+                                    MostrarMensajeSencillo("Error",res.mensaje)
                                 }
-                                Log.e("salio",res.msj)
+                                Log.e("salio",res.mensaje)
 
                             }
                             override fun onFailure(call: Call<ResponseSubirFotos>, t: Throwable) {

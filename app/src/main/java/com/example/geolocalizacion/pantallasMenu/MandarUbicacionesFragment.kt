@@ -51,13 +51,13 @@ class MandarUbicacionesFragment(token:String) : Fragment(R.layout.fragment_manda
                             override fun onResponse(call: Call<ResponseSubirFotos>, response: Response<ResponseSubirFotos>) {
                                 val res = response.body()!!
                                 LoadingScreen.hideLoading()
-                                if(res.pasa){
+                                if(res.valido){
                                     IniciarRecycler(view)
-                                    MostrarMensajeSencillo("ubicaciones subidas",res.msj)
+                                    MostrarMensajeSencillo("ubicaciones subidas",res.mensaje)
                                 }else{
-                                    MostrarMensajeSencillo("Error",res.msj)
+                                    MostrarMensajeSencillo("Error",res.mensaje)
                                 }
-                                Log.e("salio",res.msj)
+                                Log.e("salio",res.mensaje)
                             }
                             override fun onFailure(call: Call<ResponseSubirFotos>, t: Throwable) {
                                 Log.e("respuesta","No salió")

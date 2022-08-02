@@ -18,11 +18,14 @@ import com.google.android.material.navigation.NavigationView
 class Base_Menu : AppCompatActivity() {
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var tokenStr:String
+    private var IdUsuario:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         tokenStr = intent.getStringExtra("token").toString()
+        val strIdUsuario = intent.getStringExtra("idUsuario")
+        if(!strIdUsuario.isNullOrBlank()) IdUsuario = strIdUsuario.toString().toInt()
         setContentView(R.layout.activity_base_menu)
         supportActionBar!!.title = "Carga de Fotografías"
         val drawerLayout:DrawerLayout = findViewById(R.id.drawerLayout)
@@ -52,7 +55,7 @@ class Base_Menu : AppCompatActivity() {
                 }
                 R.id.nav_2 -> {
                     supportFragmentManager.beginTransaction().apply {
-                        replace(R.id.fragmentContaiderView, MandarFotosFragment(tokenStr))
+                        replace(R.id.fragmentContaiderView, MandarFotosFragment(tokenStr,IdUsuario))
                         commit()
                         supportActionBar!!.title = "Envio de Fotografías"
                     }

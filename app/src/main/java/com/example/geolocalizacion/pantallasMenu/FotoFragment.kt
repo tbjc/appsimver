@@ -36,6 +36,8 @@ import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.collections.ArrayList
 
 
@@ -119,6 +121,10 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
                     txtLongitud.text = ubicacion.longitude.toString()
                     //Toast.makeText(requireContext(),ubicacion.latitude.toString()+"::"+ubicacion.longitude.toString(),Toast.LENGTH_SHORT).show()
                 }
+            }
+            override fun onLocationAvailability(p0: LocationAvailability) {
+                super.onLocationAvailability(p0)
+                Log.e("estado de localización",p0.isLocationAvailable.toString())
             }
         }
         iniciaLocationRequest()
@@ -314,6 +320,7 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
     private fun guardarFotoDB(mesDato:Int){
         val Descripcion:String = descripcionFoto.text.toString().trim()
         if(Descripcion.isNotEmpty()){
+            val tiempoActual = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy:MM:dd hh:mm:ss"))
             DBSqliteHelperLocal(requireContext()).agregarFoto(
                 ObraSeleccionada.numeroObra,
                 ObraSeleccionada.idobra,
@@ -324,7 +331,8 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
                 LatitudGlobal,
                 LongitudGlobal,
                 Descripcion,
-                mesDato
+                mesDato,
+                tiempoActual
             )
             ObraSeleccionada.numeroObra
             this.tomoFoto = false

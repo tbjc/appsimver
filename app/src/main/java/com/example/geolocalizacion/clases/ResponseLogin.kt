@@ -9,4 +9,4 @@ class ResponseLogin (
     val municipioId:Int)
 
 
-class ResponseSubirFotos(var pasa:Boolean, var msj:String)
+class ResponseSubirFotos(var valido:Boolean, var mensaje:String)

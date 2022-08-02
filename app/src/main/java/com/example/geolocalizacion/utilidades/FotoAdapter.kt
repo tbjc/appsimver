@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.geolocalizacion.R
 import com.example.geolocalizacion.clases.FotoObj
 import com.example.geolocalizacion.clases.fotoPostRequest
+import com.example.geolocalizacion.clases.imagenJson
+import com.example.geolocalizacion.clases.metadatos
+import com.google.gson.Gson
 import kotlin.collections.ArrayList
 
 class FotoAdapter(val fotoObra:ArrayList<FotoObj>):RecyclerView.Adapter<FotoAdapter.FotoHolder>(){
@@ -63,7 +66,7 @@ class FotoAdapter(val fotoObra:ArrayList<FotoObj>):RecyclerView.Adapter<FotoAdap
         return returnObras
     }
 
-    fun obrasRequestDatos(){
+    fun obrasRequestDatos(IdUsuario:Int):ArrayList<fotoPostRequest>{
         var returnObras: ArrayList<FotoObj> = ArrayList<FotoObj>()
         objSeleccionadosBooleano.forEachIndexed { index, estaSeleccionado->
             if (estaSeleccionado){
@@ -71,20 +74,46 @@ class FotoAdapter(val fotoObra:ArrayList<FotoObj>):RecyclerView.Adapter<FotoAdap
             }
         }
         var objDatos:ArrayList<fotoPostRequest> = ArrayList<fotoPostRequest>()
-        objDatos.forEach {
+        returnObras.forEach {
+            val metadatosStr: String = Gson().toJson(metadatos(
+                "2.8",
+                it.mes,
+                it.fecha,
+                "0.01",
+                "0.01",
+                "0.01",
+                "null",
+                "null",
+                it.latitud,
+                "null",
+                it.longitud,
+                "null",
+                "null",
+                "null",
+                "100",
+                "smartphone",
+                "null",
+                "1",
+                "0"
+            ))
 
-            val objFoto:fotoPostRequest = fotoPostRequest(
-                it.ObraId,
-                it.NumeroObra,
-                it.DescripcionFoto,
-                it.Mes,
-                it.Latitud,
-                it.Longitud,
-                1,
-                "{\"filename\":\"token_base64\",\"json_metadata\":\"{}\"}"
+            val imagenJson:imagenJson = imagenJson(
+                it.foto64,
+                metadatosStr
             )
 
+            val objFoto:fotoPostRequest = fotoPostRequest(
+                it.idObra,
+                it.numeroObra,
+                it.descripcion,
+                it.latitud.toDouble(),
+                it.longitud.toDouble(),
+                IdUsuario,
+                Gson().toJson(imagenJson)
+            )
+            objDatos.add(objFoto)
         }
+        return objDatos
     }
 
     class FotoHolder(val view: View):RecyclerView.ViewHolder(view){

@@ -8,23 +8,29 @@ data class FotoObj (
     val longitud:String,
     val cadena:String,
     val foto64: String,
-    val mes:Int
+    val mes:Int,
+    val descripcion:String,
+    val fecha:String
     )
 
 class fotoPostRequest(
-    val ObraId:Int,
-    val NumeroObra:String,
-    val DescripcionFoto:String,
-    val Mes:Int,
+    val obraId:Int,
+    val numeroObra:String,
+    val descripcionFoto:String,
     val Latitud:Double,
     val Longitud:Double,
-    val UserID:Int,
-    val Imagen:String,
-    val Metadatos:String
+    val UserId:Int,
+    val Imagen:String
 )
+
+class imagenJson(
+    val filename:String,
+    val json_metadata:String
+    )
 
 class metadatos(
     val aperture:String,
+    val mesDato:Int,
     val datetime:String,
     val exposureTime:String,
     val flash:String,
