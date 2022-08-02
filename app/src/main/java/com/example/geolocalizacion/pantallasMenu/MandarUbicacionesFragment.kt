@@ -18,7 +18,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class MandarUbicacionesFragment(token:String) : Fragment(R.layout.fragment_mandar_ubicaciones) {
+class MandarUbicacionesFragment(token:String, IdUsuario:Int) : Fragment(R.layout.fragment_mandar_ubicaciones) {
 
     private lateinit var ListasUbicaciones:ArrayList<UbicacionesObj>
     private lateinit var rvUbicaciones:RecyclerView
@@ -26,6 +26,7 @@ class MandarUbicacionesFragment(token:String) : Fragment(R.layout.fragment_manda
     private lateinit var dialogB:AlertDialog.Builder
     private lateinit var dialogB2:AlertDialog.Builder
     private var tokenStr:String = token
+    private val idUsuario:Int = IdUsuario
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +39,7 @@ class MandarUbicacionesFragment(token:String) : Fragment(R.layout.fragment_manda
         dialogB = AlertDialog.Builder(requireContext())
         dialogB2 = AlertDialog.Builder(requireContext())
         buttonMandar.setOnClickListener {
-            val listaUbicaciones = valAdapter.ObrasSeleccionadasArray()
+            val listaUbicaciones = valAdapter.ubicacionesRequestDatos(idUsuario)
             if(listaUbicaciones.size > 0){
                 dialogB.setTitle("Confirmar").setMessage("¿Está seguro de enviar las ubicaciones seleccionadas?")
                     .setNegativeButton("Enviar", DialogInterface.OnClickListener{ dialog, id ->
@@ -49,15 +50,20 @@ class MandarUbicacionesFragment(token:String) : Fragment(R.layout.fragment_manda
                         service.subirUbicaciones(listaUbicaciones,peticion).enqueue(object :
                             Callback<ResponseSubirFotos> {
                             override fun onResponse(call: Call<ResponseSubirFotos>, response: Response<ResponseSubirFotos>) {
-                                val res = response.body()!!
-                                LoadingScreen.hideLoading()
-                                if(res.valido){
-                                    IniciarRecycler(view)
-                                    MostrarMensajeSencillo("ubicaciones subidas",res.mensaje)
+                                if(response.isSuccessful){
+                                    val res = response.body()!!
+                                    LoadingScreen.hideLoading()
+                                    if(res.valido){
+                                        IniciarRecycler(view)
+                                        MostrarMensajeSencillo("ubicaciones subidas",res.mensaje)
+                                    }else{
+                                        MostrarMensajeSencillo("Error",res.mensaje)
+                                    }
+                                    Log.e("salio",res.mensaje)
                                 }else{
-                                    MostrarMensajeSencillo("Error",res.mensaje)
+                                    LoadingScreen.hideLoading()
+                                    MostrarMensajeSencillo("Error","Salga de la aplicación y vuelva a entrar con su usuario y contraseña")
                                 }
-                                Log.e("salio",res.mensaje)
                             }
                             override fun onFailure(call: Call<ResponseSubirFotos>, t: Throwable) {
                                 Log.e("respuesta","No salió")

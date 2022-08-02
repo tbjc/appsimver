@@ -59,16 +59,22 @@ class MandarFotosFragment(token:String, IdUsuario:Int) : Fragment(R.layout.fragm
                         val peticion:String = "Bearer "+tokenStr
                         service.subirObras(listaFoto,peticion).enqueue(object : Callback<ResponseSubirFotos>{
                             override fun onResponse(call: Call<ResponseSubirFotos>,response: Response<ResponseSubirFotos>) {
-                                val res = response.body()!!
-                                LoadingScreen.hideLoading()
-                                if(res.valido){
-                                    IniciarRecycler(view)
-                                    MostrarMensajeSencillo("Fotos subidas",res.mensaje)
+                                if (response.isSuccessful){
+                                    val res = response.body()!!
+                                    LoadingScreen.hideLoading()
+                                    if(res.valido){
+                                        IniciarRecycler(view)
+                                        MostrarMensajeSencillo("Fotos subidas",res.mensaje)
+                                    }else{
+                                        MostrarMensajeSencillo("Error",res.mensaje)
+                                    }
+                                    Log.e("salio",res.mensaje)
                                 }else{
-                                    MostrarMensajeSencillo("Error",res.mensaje)
+                                    LoadingScreen.hideLoading()
+                                    if(response.code() == 401){
+                                        MostrarMensajeSencillo("Error sesión","Salga de la aplicación y vuelva a entrar con su usuario y contraseña")
+                                    }
                                 }
-                                Log.e("salio",res.mensaje)
-
                             }
                             override fun onFailure(call: Call<ResponseSubirFotos>, t: Throwable) {
                                 Log.e("respuesta","No salió")
@@ -80,6 +86,8 @@ class MandarFotosFragment(token:String, IdUsuario:Int) : Fragment(R.layout.fragm
                     }).setPositiveButton("No",DialogInterface.OnClickListener{ dialog, id ->
                         dialog.cancel()
                     }).show()
+            }else{
+                MostrarMensajeSencillo("Error","Debe seleccionar al menos una imagen")
             }
         }
 

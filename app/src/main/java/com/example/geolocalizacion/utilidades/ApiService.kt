@@ -12,8 +12,8 @@ interface ApiService {
     fun getAllObras(@Query("nombreUsuario") usuario:String, @Header("Authorization") tokenAuth:String):Call<List<ObraDatoAPI>>
 
     @POST("api/crudgeo/guardaFotosObras")
-    fun subirObras(@Body listaObras:ArrayList<fotoPostRequest>, @Header("Authorization") tokenAuth:String): Call<ResponseSubirFotos>
+    fun subirObras(@Body listaFotosObraModel:ArrayList<fotoPostRequest>, @Header("Authorization") tokenAuth:String): Call<ResponseSubirFotos>
 
-    @POST("cargarUbicaciones")
-    fun subirUbicaciones(@Body listaUbicaciones:ArrayList<UbicacionesObj>, @Header("Authorization") tokenAuth:String): Call<ResponseSubirFotos>
+    @POST("api/crudgeo/guardaListaObras")
+    fun subirUbicaciones(@Body listaObraModel:ArrayList<fotoPostRequest>, @Header("Authorization") tokenAuth:String): Call<ResponseSubirFotos>
 }

@@ -70,7 +70,7 @@ class Base_Menu : AppCompatActivity() {
                 }
                 R.id.nav_4 -> {
                     supportFragmentManager.beginTransaction().apply {
-                        replace(R.id.fragmentContaiderView, MandarUbicacionesFragment(tokenStr))
+                        replace(R.id.fragmentContaiderView, MandarUbicacionesFragment(tokenStr,IdUsuario))
                         commit()
                         supportActionBar!!.title = "Carga de Ubicaciones"
 

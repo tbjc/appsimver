@@ -7,7 +7,9 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geolocalizacion.R
+import com.example.geolocalizacion.clases.FotoObj
 import com.example.geolocalizacion.clases.UbicacionesObj
+import com.example.geolocalizacion.clases.fotoPostRequest
 
 class UbicacionAdapter(val UbicacionObj:ArrayList<UbicacionesObj>): RecyclerView.Adapter<UbicacionAdapter.UbicacionHolder>() {
     private var objSeleccionados:ArrayList<UbicacionesObj> = UbicacionObj
@@ -53,6 +55,30 @@ class UbicacionAdapter(val UbicacionObj:ArrayList<UbicacionesObj>): RecyclerView
             }
         }
         return returnObras
+    }
+
+    fun ubicacionesRequestDatos(IdUsuario:Int):ArrayList<fotoPostRequest>{
+        var returnObras: ArrayList<UbicacionesObj> = ArrayList<UbicacionesObj>()
+        objSeleccionadosBooleano.forEachIndexed { index, estaSeleccionado->
+            if (estaSeleccionado){
+                returnObras.add(objSeleccionados.get(index))
+            }
+        }
+        var returnObrasDatos: ArrayList<fotoPostRequest> = ArrayList<fotoPostRequest>()
+        returnObras.forEach {
+            var objUbicacion:fotoPostRequest = fotoPostRequest(
+                it.idObra,
+                it.numero,
+                "",
+                it.latitud.toDouble(),
+                it.longitud.toDouble(),
+                IdUsuario,
+                ""
+            )
+            returnObrasDatos.add(objUbicacion)
+        }
+
+        return returnObrasDatos
     }
 
     class UbicacionHolder (val view: View):RecyclerView.ViewHolder(view){

@@ -10,3 +10,5 @@ class ResponseLogin (
 
 
 class ResponseSubirFotos(var valido:Boolean, var mensaje:String)
+
+class ResponseSubirUbicaciones(var valido:Boolean, var mensaje:String)
