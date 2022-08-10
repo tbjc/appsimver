@@ -5,7 +5,9 @@ class ObraAPI(
     var idobra:Int,
     var municipio:String,
     var idmunicipio:Int,
-    var clave:String
+    var clave:String,
+    var fondo:String,
+    var localidad:String
     )
 
 class ObraDatoAPI(

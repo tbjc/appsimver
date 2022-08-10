@@ -8,10 +8,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.geolocalizacion.pantallasMenu.FotoFragment
-import com.example.geolocalizacion.pantallasMenu.MandarFotosFragment
-import com.example.geolocalizacion.pantallasMenu.MandarUbicacionesFragment
-import com.example.geolocalizacion.pantallasMenu.UbicacionesFragment
+import com.example.geolocalizacion.pantallasMenu.*
 import com.google.android.material.navigation.NavigationView
 
 
@@ -74,6 +71,13 @@ class Base_Menu : AppCompatActivity() {
                         commit()
                         supportActionBar!!.title = "Carga de Ubicaciones"
 
+                    }
+                }
+                R.id.nav_5 -> {
+                    supportFragmentManager.beginTransaction().apply {
+                        replace(R.id.fragmentContaiderView, ObrasGuardadasFragment())
+                        commit()
+                        supportActionBar!!.title = "Obras almacenadas"
                     }
                 }
                 R.id.nav_salir -> {

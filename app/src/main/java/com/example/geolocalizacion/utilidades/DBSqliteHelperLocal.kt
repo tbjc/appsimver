@@ -5,19 +5,20 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
-import android.widget.Toast
 import com.example.geolocalizacion.clases.FotoObj
 import com.example.geolocalizacion.clases.ObraAPI
 import com.example.geolocalizacion.clases.UbicacionesObj
 
 class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db", null, 1){
     override fun onCreate(db: SQLiteDatabase?) {
-        val ordenCreacion = "CREATE TABLE IF NOT EXISTS  obras (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+        val ordenCreacion = "CREATE TABLE IF NOT EXISTS obras(_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "numero TEXT, " +
                 "idObra TEXT, " +
                 "idMunicipio TEXT, " +
                 "municipio TEXT, " +
-                "clave TEXT)"
+                "clave TEXT, " +
+                "fondo TEXT, " +
+                "localidad TEXT)"
         db!!.execSQL(ordenCreacion)
         val creacionTablaFotos = "CREATE TABLE IF NOT EXISTS Fotos (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "numeroObra TEXT, " +
@@ -51,13 +52,15 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
         onCreate(db)
     }
 
-    fun agregarObra(numero:String, idObra:Int, idMunicipio:Int, municipio:String, clave:String){
+    fun agregarObra(numero:String, idObra:Int, idMunicipio:Int, municipio:String, clave:String, fondo:String, localidad:String){
         val datos = ContentValues()
         datos.put("numero",numero)
         datos.put("idObra",idObra.toString())
         datos.put("idMunicipio",idMunicipio.toString())
         datos.put("municipio",municipio)
         datos.put("clave", clave)
+        datos.put("fondo", fondo)
+        datos.put("localidad", localidad)
 
         val db = this.writableDatabase
         db.insert("obras",null,datos)
@@ -95,7 +98,9 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
                 val idMunicipio = sqlStr.getInt(3).toInt()
                 val municipio = sqlStr.getString(4)
                 val clave = sqlStr.getString(5)
-                var obraObj = ObraAPI(numeroObra,idObra,municipio,idMunicipio,clave)
+                val fondo = sqlStr.getString(6)
+                val localidad = sqlStr.getString(7)
+                var obraObj = ObraAPI(numeroObra,idObra,municipio,idMunicipio,clave,fondo,localidad)
                 listaObras.add(obraObj)
             }while (sqlStr.moveToNext())
         }

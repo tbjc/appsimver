@@ -1,12 +1,9 @@
 package com.example.geolocalizacion.pantallasMenu
 
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
-import android.view.GestureDetector
-import android.view.GestureDetector.SimpleOnGestureListener
-import android.view.MotionEvent
+
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
@@ -14,10 +11,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import com.example.geolocalizacion.R
 import com.example.geolocalizacion.clases.FotoObj
-import com.example.geolocalizacion.clases.ResponseLogin
 import com.example.geolocalizacion.clases.ResponseSubirFotos
 import com.example.geolocalizacion.utilidades.DBSqliteHelperLocal
 import com.example.geolocalizacion.utilidades.FotoAdapter
@@ -111,7 +106,7 @@ class MandarFotosFragment(token:String, IdUsuario:Int) : Fragment(R.layout.fragm
 
     fun IniciarRecycler(view: View){
         ListaFotos = DBSqliteHelperLocal(requireContext()).getAllFotos()
-        rvFotos = view.findViewById(R.id.reciclerFotos)
+        rvFotos = view.findViewById(R.id.reciclerObras)
         rvFotos.layoutManager = LinearLayoutManager(requireContext())
         valAdapter = FotoAdapter(ListaFotos)
         rvFotos.adapter = valAdapter
