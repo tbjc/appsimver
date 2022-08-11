@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geolocalizacion.R
 import com.example.geolocalizacion.clases.FotoObj
@@ -45,6 +47,12 @@ class FotoAdapter(val fotoObra:ArrayList<FotoObj>):RecyclerView.Adapter<FotoAdap
             }
             notifyDataSetChanged()
         }
+
+        holder.itemView.setOnLongClickListener{
+            Toast.makeText(holder.view.context, "evento detectado", Toast.LENGTH_SHORT).show()
+            true
+        }
+
         if(objSeleccionadosBooleano.get(position)){
             holder.cardView.setBackgroundResource(R.drawable.style_item_selected)
         }else{

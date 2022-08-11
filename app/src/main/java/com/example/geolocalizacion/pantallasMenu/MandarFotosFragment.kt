@@ -106,7 +106,7 @@ class MandarFotosFragment(token:String, IdUsuario:Int) : Fragment(R.layout.fragm
 
     fun IniciarRecycler(view: View){
         ListaFotos = DBSqliteHelperLocal(requireContext()).getAllFotos()
-        rvFotos = view.findViewById(R.id.reciclerObras)
+        rvFotos = view.findViewById(R.id.reciclerFotos)
         rvFotos.layoutManager = LinearLayoutManager(requireContext())
         valAdapter = FotoAdapter(ListaFotos)
         rvFotos.adapter = valAdapter

@@ -5,13 +5,13 @@
     android:id="@+id/BtnEntrar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/rect833"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/rect833"
         android:contentDescription="@string/app_name">
 
         <LinearLayout

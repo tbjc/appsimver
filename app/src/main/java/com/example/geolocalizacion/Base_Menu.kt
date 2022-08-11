@@ -39,6 +39,7 @@ class Base_Menu : AppCompatActivity() {
         if(habilitarOpciones == "N"){
             navView.menu.findItem(R.id.nav_2).setVisible(false)
             navView.menu.findItem(R.id.nav_4).setVisible(false)
+            navView.menu.findItem(R.id.nav_5).setVisible(false)
         }
 
         navView.setNavigationItemSelectedListener {
@@ -88,7 +89,6 @@ class Base_Menu : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

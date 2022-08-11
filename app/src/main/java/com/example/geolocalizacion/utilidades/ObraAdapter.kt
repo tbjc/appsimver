@@ -45,6 +45,18 @@ class ObraAdapter(val ObrasObj:ArrayList<ObraAPI>): RecyclerView.Adapter<ObraAda
         return ObrasObj.size
     }
 
+    fun obrasSeleccionadas():ArrayList<ObraAPI>{
+        var selObrasSeleccionadas = ArrayList<ObraAPI>()
+        var index:Int = 0
+        objSeleccionadosBooleano.forEach {
+            if (it){
+                selObrasSeleccionadas.add(objSeleccionados.get(index))
+            }
+            index++
+        }
+        return selObrasSeleccionadas
+    }
+
     class ObraHolder (val view: View):RecyclerView.ViewHolder(view){
         var seleccionado:Boolean = false
         var cardview: ConstraintLayout = view.findViewById(R.id.ObraLayout)

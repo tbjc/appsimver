@@ -108,6 +108,14 @@ class DBSqliteHelperLocal(context:Context): SQLiteOpenHelper(context,"obras.db",
         return listaObras
     }
 
+    fun eliminarObra(numero:String){
+        val db = this.writableDatabase
+        val ordenBorrado1 = "DELETE FROM obras where numero = '"+numero+"'"
+        Log.e("SQL_DELETE", ordenBorrado1)
+        db!!.execSQL(ordenBorrado1)
+        db.close()
+    }
+
     fun agregarFoto(numero:String, idObra:Int, idMunicipio:Int, municipio:String, objJson:String, fotoBase64: String, latitud:Double, longitud:Double, descripcion:String, mesDato:Int, fecha:String){
         val datos = ContentValues()
         datos.put("numeroObra",numero)

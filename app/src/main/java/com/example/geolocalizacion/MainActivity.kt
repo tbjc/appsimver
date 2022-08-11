@@ -33,15 +33,12 @@ class MainActivity : AppCompatActivity() {
         val textPassEdit = findViewById<TextView>(R.id.EditPassLogin)
         textoMensaje = findViewById<TextView>(R.id.MensajePeticion)
         dialogB = AlertDialog.Builder(this)
-        //Login botón
 
         botonEntrar.setOnClickListener {
             val usuario = textUsuarioEdit?.text.toString()
             val password = textPassEdit?.text.toString()
             if (textUsuarioEdit.text.isNotBlank()){
                 if(textPassEdit.text.isNotBlank()){
-
-                    //var urlServer:String = "http://192.168.0.14/proyectoApi/public/";
                     solicitudLogin(usuario,password);
                 }else{
                     Toast.makeText(this,"Falta la contraseña",Toast.LENGTH_SHORT).show()
@@ -97,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                 Log.i("peticion Fin",t.toString())
 
                 dialogB.setTitle("Error")
-                    .setMessage("No se ha podico comunicar con el servidor, intente mas tarde o comuníquese con el ORFIS")
+                    .setMessage("No se ha podico comunicar con el servidor, intente de nuevo")
                     .setNeutralButton("Continuar"){ dialogInterface,it ->
                         it.toString()
                         dialogInterface.cancel()
