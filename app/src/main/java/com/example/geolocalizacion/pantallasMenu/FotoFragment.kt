@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -146,8 +147,6 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
     // Evento de crear Vista
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // se carga la vista y se obtienen los Id de los elementos de la vista
-
-
         var lista:ArrayList<String> = ArrayList<String>()
         val spinner = view.findViewById<Spinner>(R.id.spinnerObras)
         val btnFoto = view.findViewById<Button>(R.id.btnFotoTomar)
@@ -170,7 +169,7 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
         ListaObrasObj.forEach {
             lista.add(it.numeroObra)
         }
-
+        //Si se detecta que no hay obras almacnadas se sale de la pantalla
         if (lista.size == 0){
             val dialogB:AlertDialog.Builder = AlertDialog.Builder(requireContext())
             dialogB.setTitle("Error")
@@ -181,7 +180,7 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
                 }
                 .show()
         }
-
+        //Se arma la lista con las obras obtenidas de la DB de sqlite
         val aaObras = ArrayAdapter<String>(cont, android.R.layout.simple_spinner_dropdown_item,lista)
         spinner.adapter = aaObras
 
@@ -193,7 +192,6 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
                 Log.e("Objeto Seleccionado", ObraSeleccionada.toString())
                 imageViewTmp.isVisible = false
                 tomoFoto = false
-
             }
             override fun onNothingSelected(p0: AdapterView<*>?) {
 
@@ -203,46 +201,57 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
         //Evento de boton para tomar fotos
         btnFoto.setOnClickListener {
             var localizacionDato:Boolean = false
+            //Se obtiene el archivo que corresponde al GEOJson del municipio
             val nombreArchivo:String = ObraSeleccionada.clave+".json"
             val txtJson:String = Network.getStringJson(requireContext(), nombreArchivo)
+            //se traduce el string a un objeto json
             val objPolCoordenadas = Gson().fromJson(txtJson, ObjPolygono::class.java)
-            objPolCoordenadas.geometry.coordinates.forEach {
-                var arrayEjeX:ArrayList<Double> = ArrayList<Double>()
-                var arrayEjeY:ArrayList<Double> = ArrayList<Double>()
-                it.forEach { it2->
-                    arrayEjeX.add(it2[0])
-                    arrayEjeY.add(it2[1])
-                }
-                if(Network.puntoEnPoligono(arrayEjeX.size, arrayEjeX, arrayEjeY, LongitudGlobal, LatitudGlobal)){
-                    localizacionDato = true
-                }
-            }
-
-            if (localizacionDato){
-                txtMensajeFoto.isVisible = true
-                txtMensajeFoto.text = "Comprobando Ubicación"
-
-                val intentCamara = Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
-                    it.resolveActivity(requireActivity().packageManager).also { component ->
-                        val photoFile: File = createPhotoFile()
-                        fileExt = photoFile
-                        val photoUri: Uri = FileProvider.getUriForFile(requireContext(),BuildConfig.APPLICATION_ID+".fileprovider",photoFile)
-                        it.putExtra(MediaStore.EXTRA_OUTPUT,photoUri)
-                    }
-                }
-                //intentCamara.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(File("/sdcard/tmp")))
-                ///intentCamara.putExtra("android.intent.extras.CAMERA_FACING", 1);
-                startForResult.launch(intentCamara)
+            // validación para que espere a que carguen las coordenadas
+            if(LongitudGlobal == 0.0 && LatitudGlobal == 0.0){
+                val dialogAlerta = AlertDialog.Builder(requireContext())
+                dialogAlerta.setTitle("Error")
+                dialogAlerta.setMessage("Espere a que carguen las coordenadas")
+                dialogAlerta.setNeutralButton("Continuar", DialogInterface.OnClickListener { dialog, which ->
+                    dialog.cancel()
+                })
+                dialogAlerta.show()
             }else{
-                AlertDialog.Builder(requireContext()).setTitle("Error")
-                    .setMessage("Usted no se encuentra dentro del municipio: '"+ObraSeleccionada.municipio+"'")
-                    .setNeutralButton("Continuar"){ dialogInterface,it ->
-                        dialogInterface.cancel()
+                //se verifican los poligonos asignados a un municipio
+                objPolCoordenadas.geometry.coordinates.forEach {
+                    var arrayEjeX:ArrayList<Double> = ArrayList<Double>()
+                    var arrayEjeY:ArrayList<Double> = ArrayList<Double>()
+                    it.forEach { it2->
+                        arrayEjeX.add(it2[0])
+                        arrayEjeY.add(it2[1])
                     }
-                    .show()
+                    if(Network.puntoEnPoligono(arrayEjeX.size, arrayEjeX, arrayEjeY, LongitudGlobal, LatitudGlobal)){
+                        localizacionDato = true
+                    }
+                }
+                //si se verifica que la coordenada de la foto está dentro del municipio
+                if (localizacionDato){
+                    txtMensajeFoto.isVisible = true
+                    txtMensajeFoto.text = "Comprobando Ubicación"
+                    //se toma la foto y se obtiene el archivo
+                    val intentCamara = Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
+                        it.resolveActivity(requireActivity().packageManager).also { component ->
+                            //se crea el archivo donde se tomará la foto
+                            val photoFile: File = createPhotoFile()
+                            fileExt = photoFile
+                            val photoUri: Uri = FileProvider.getUriForFile(requireContext(),BuildConfig.APPLICATION_ID+".fileprovider",photoFile)
+                            it.putExtra(MediaStore.EXTRA_OUTPUT,photoUri)
+                        }
+                    }
+                    startForResult.launch(intentCamara)
+                }else{
+                    //Si se verifica que no está en el municipio
+                    AlertDialog.Builder(requireContext()).setTitle("Error")
+                        .setMessage("Usted no se encuentra dentro del municipio: '"+ObraSeleccionada.municipio+"'")
+                        .setNeutralButton("Continuar"){ dialogInterface,it ->
+                            dialogInterface.cancel()
+                        }.show()
+                }
             }
-
-
         }
 
         //evento para guardar fotografias
@@ -250,18 +259,20 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
             val fechaDia:Int = LocalDate.now().dayOfMonth
             val fechaMEs:Int = LocalDate.now().monthValue
             var mesGuardar:Int = 0
+            //se verifica si se toma la foto en los primeros 10 días del mes
             val nombreMeses:ArrayList<String> = arrayListOf("Diciembre","Enero", "Febrero","Marzo","Abril","Mayo", "Junio","Julio", "Agosto","Septiembre","Octubre","Noviembre","Diciembre")
             if (fechaDia <= 10){
                 var mesActual:String = nombreMeses.get(fechaMEs)
                 var mesAnterior:String = nombreMeses.get(fechaMEs - 1)
+                //se escoge el mes al cual se quiere asignar la fotografía
                 AlertDialog.Builder(requireContext()).setTitle("Advertencia")
                     .setMessage("¿En que mes quiere que sea asignada la fotografía?")
                     .setNeutralButton(mesAnterior){ dialog, it->
                         if(fechaMEs == 1) mesGuardar = 12 else mesGuardar = fechaMEs - 1
-                        Log.e("mes Anterior",mesGuardar.toString())
+                        //Log.e("mes Anterior",mesGuardar.toString())
                         guardarFotoDB(mesGuardar)
                     }.setPositiveButton(mesActual){ dialog, it->
-                        Log.e("mes Anterior",fechaMEs.toString())
+                        //Log.e("mes Anterior",fechaMEs.toString())
                         guardarFotoDB(fechaMEs)
                     }.show()
             }else{
@@ -284,15 +295,16 @@ class FotoFragment() : Fragment(R.layout.fragment_foto){
         if(result.resultCode == Activity.RESULT_OK){
             //obtenemos los datos de la foto
             val intent = result.data
-            //this.imageBitmap = intent?.extras?.get("data") as Bitmap
             val imagenBitTmp: Bitmap = BitmapFactory.decodeFile(fileExt.toString())
             var tmpHeight:Int = 0
+            //se hace operación para redimensionar el alto de la fotografía
             if (imagenBitTmp.width > 900){
                 val porcentaje:Double = ((1.0/imagenBitTmp.width.toInt()) * 900)
                 tmpHeight = (imagenBitTmp.height * porcentaje).toInt()
             }else{
                 tmpHeight = imagenBitTmp.height
             }
+            //Se hace la conversión de de foto a base64
             this.imageBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(fileExt.toString()),900,tmpHeight,false)
             val baos = ByteArrayOutputStream()
             this.imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)

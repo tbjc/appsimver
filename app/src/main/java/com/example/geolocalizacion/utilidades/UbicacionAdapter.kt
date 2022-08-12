@@ -1,5 +1,7 @@
 package com.example.geolocalizacion.utilidades
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +37,13 @@ class UbicacionAdapter(val UbicacionObj:ArrayList<UbicacionesObj>): RecyclerView
                 objSeleccionadosBooleano.set(position,true)
             }
             notifyDataSetChanged()
+        }
+        holder.itemView.setOnLongClickListener {
+            val urlDato = "https://www.google.com.mx/maps/search/"+UbicacionObj[position].latitud+",+"+UbicacionObj[position].longitud+"/data=!3m1!1e3"
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(urlDato)
+            it.context.startActivity(intent)
+            true
         }
         if (objSeleccionadosBooleano.get(position)){
             holder.cardview.setBackgroundResource(R.drawable.style_item_selected)
@@ -77,7 +86,6 @@ class UbicacionAdapter(val UbicacionObj:ArrayList<UbicacionesObj>): RecyclerView
             )
             returnObrasDatos.add(objUbicacion)
         }
-
         return returnObrasDatos
     }
 

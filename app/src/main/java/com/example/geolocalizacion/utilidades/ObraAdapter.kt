@@ -1,5 +1,7 @@
 package com.example.geolocalizacion.utilidades
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +36,9 @@ class ObraAdapter(val ObrasObj:ArrayList<ObraAPI>): RecyclerView.Adapter<ObraAda
             }
             notifyDataSetChanged()
         }
+
+
+
         if(objSeleccionadosBooleano.get(position)){
             holder.cardview.setBackgroundResource(R.drawable.style_item_selected)
         }else{

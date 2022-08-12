@@ -9,7 +9,6 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.Toolbar
 import androidx.appcompat.app.AlertDialog
 import com.example.geolocalizacion.clases.RequestLogin
 import com.example.geolocalizacion.clases.ResponseLogin
@@ -89,17 +88,13 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             override fun onFailure(call: Call<ResponseLogin>, t: Throwable) {
-                Log.i("peticion Fin","se finalizó peticion")
                 textoMensaje.text = ""
-                Log.i("peticion Fin",t.toString())
-
                 dialogB.setTitle("Error")
                     .setMessage("No se ha podico comunicar con el servidor, intente de nuevo")
                     .setNeutralButton("Continuar"){ dialogInterface,it ->
                         it.toString()
                         dialogInterface.cancel()
-                    }
-                    .show()
+                    }.show()
             }
         })
     }

@@ -1,6 +1,10 @@
 package com.example.geolocalizacion.utilidades
 
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,8 +13,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.geolocalizacion.R
 import com.example.geolocalizacion.clases.FotoObj
@@ -47,15 +50,46 @@ class FotoAdapter(val fotoObra:ArrayList<FotoObj>):RecyclerView.Adapter<FotoAdap
             }
             notifyDataSetChanged()
         }
-
+        //Evento de mantener presionado el item
         holder.itemView.setOnLongClickListener{
-            Toast.makeText(holder.view.context, "evento detectado", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(holder.view.context, "evento detectado", Toast.LENGTH_SHORT).show()
+            val builder = AlertDialog.Builder(holder.view.context)
+            val inflater = LayoutInflater.from(holder.view.context)
+            //se obtiene la vista
+            val vistaContenido = inflater.inflate(R.layout.detalle_foto,null)
+            //se llenan los componentes del dialog que se mostrará
+            vistaContenido.findViewById<TextView>(R.id.dialogNumObra).text = fotoObra[position].numeroObra
+            vistaContenido.findViewById<TextView>(R.id.dialogFecha).text = fotoObra[position].fecha
+            //se obtiene el mes al que se asigna la foto
+            val mesesData:ArrayList<String> = arrayListOf("Enero", "Febrero","Marzo","Abril","Mayo", "Junio","Julio", "Agosto","Septiembre","Octubre","Noviembre","Diciembre")
+            vistaContenido.findViewById<TextView>(R.id.dialogMes).text = mesesData[fotoObra[position].mes-1]
+            vistaContenido.findViewById<TextView>(R.id.dialogDescripcion).text = fotoObra[position].descripcion
+            //se convierte la foto de base64 a bytes
+            var imageBytes = Base64.decode(fotoObra[position].foto64, Base64.DEFAULT)
+            val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            vistaContenido.findViewById<ImageView>(R.id.dialogFoto).setImageBitmap(decodedImage)
+            //vistaContenido.setBackgroundResource(R.drawable.style_item_foto)
+            //se asigna la vista al dialog
+            builder.setView(vistaContenido).setTitle("Datos de obra")
+                .setNeutralButton("Cerrar",DialogInterface.OnClickListener { dialog, which ->
+                    dialog.cancel()
+                }).setPositiveButton("Ubicación", DialogInterface.OnClickListener { dialog, which ->
+                    //se manda a abrir en el navegador la url de la ubicacion de la foto en googlemaps
+                    val urlDato = "https://www.google.com.mx/maps/search/"+fotoObra[position].latitud+",+"+fotoObra[position].longitud+"/data=!3m1!1e3"
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(urlDato)
+                    vistaContenido.context.startActivity(intent)
+                })
+            builder.create()
+            builder.show()
             true
         }
-
+        //se cambia el estilo del item para saber si está seleccionado o no
         if(objSeleccionadosBooleano.get(position)){
+            //está seleccionado
             holder.cardView.setBackgroundResource(R.drawable.style_item_selected)
         }else{
+            //no está seleccionado
             holder.cardView.setBackgroundResource(R.drawable.style_item_foto)
         }
     }
